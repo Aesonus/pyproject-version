@@ -1,0 +1,68 @@
+[tool.poetry]
+name = "py-version"
+version = "0.1.0-dev0"
+description = "Utilities for maintaining the version in python projects."
+authors = ["Cory Laughlin <laughlin.cory@gmail.com>"]
+readme = "README.md"
+
+[tool.py-version]
+files = ["py_version/__init__.py"]
+
+[tool.poetry.scripts]
+py-version = "py_version.cli:py_version"
+
+[tool.poetry.dependencies]
+python = ">=3.11,<3.13"
+semver = "^3.0.2"
+click = "^8.1.7"
+tomlkit = "^0.12.4"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.1.1"
+pytest-cov = "^5.0.0"
+black = "^24.4.0"
+isort = "^5.13.2"
+pylint = "^3.1.0"
+mypy = "^1.9.0"
+autoflake = "^2.3.1"
+pre-commit = "^3.7.0"
+pyfakefs = "^5.4.1"
+
+[tool.poetry.group.dev.dependencies.docformatter]
+extras = ["tomli"]
+version = "^1.7.5"
+
+[[tool.poetry.packages]]
+include = "py_version"
+from = "."
+
+[tool.mypy]
+files = ["py_version"]
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+addopts = "--cov=py_version --cov-branch --cov-report xml --cov-report html -vvv"
+
+[tool.autoflake]
+remove_all_unused_imports = true
+recursive = true
+remove_unused_variables = true
+
+[tool.isort]
+profile = "black"
+
+[tool.docformatter]
+recursive = true
+blank = true
+black = true
+in-place = true
+
+[tool.coverage.report]
+exclude_also = ["if TYPE_CHECKING:"]
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+target-version = ["py311", "py312"]
