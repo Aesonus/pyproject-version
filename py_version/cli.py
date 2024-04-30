@@ -22,6 +22,7 @@ def py_version():
 @click.argument("part", type=click.Choice(PART_CHOICES))
 @click.option(
     "--project_root",
+    "-r",
     type=click.Path(
         exists=True,
         file_okay=False,
@@ -32,7 +33,7 @@ def py_version():
     default=".",
     help="The root of the Python project.",
 )
-@click.option("--token", "version_token", type=str, default=None)
+@click.option("--token", "-t", "version_token", type=str, default=None)
 @click.option("--dry-run", is_flag=True, help="Print the new version without updating.")
 def bump(
     part: Literal["major", "minor", "patch", "prerelease", "build"],
