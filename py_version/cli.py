@@ -21,7 +21,7 @@ def py_version():
 @py_version.command()
 @click.argument("part", type=click.Choice(PART_CHOICES))
 @click.option(
-    "--project_root",
+    "--project-root",
     "-r",
     type=click.Path(
         exists=True,
