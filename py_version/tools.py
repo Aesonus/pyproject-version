@@ -7,6 +7,13 @@ import tokenize
 
 
 def change_file_version(path: pathlib.Path, new_version: str) -> None:
+    """Change the version in a file.
+
+    Args:
+        path (pathlib.Path): The path to the file.
+        new_version (str): The new version to set in the file.
+
+    """
     readline = tokenize.generate_tokens(io.StringIO(path.read_text()).readline)
 
     found_version = False
