@@ -70,6 +70,7 @@ def bump(
     )
 
     if dry_run:
+        click.secho("Dry run, not updating files.", fg="yellow")
         return
     pyproject["tool"]["poetry"]["version"] = str(new_version)
     pyproject_toml.write_text(pyproject.as_string(), encoding="utf-8")
