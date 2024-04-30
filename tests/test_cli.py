@@ -4,12 +4,17 @@ import pytest
 import tomlkit
 from click.testing import CliRunner
 
-from py_version.cli import py_version
-
 
 @pytest.fixture
 def runner():
     yield CliRunner()
+
+
+@pytest.fixture
+def py_version():
+    from py_version.cli import py_version
+
+    yield py_version
 
 
 @pytest.mark.parametrize(
@@ -23,7 +28,7 @@ def runner():
     ],
 )
 @pytest.mark.usefixtures("fakefs_onepackage")
-def test_py_version_bump_one_package(runner: CliRunner, part, new_version):
+def test_py_version_bump_one_package(runner: CliRunner, py_version, part, new_version):
 
     result = runner.invoke(
         py_version, ["bump", part, "--project_root", "/"], catch_exceptions=False
@@ -52,7 +57,7 @@ __version__ = "{new_version}"
 )
 @pytest.mark.usefixtures("fakefs_onepackage")
 def test_py_version_bump_one_package_with_token(
-    runner: CliRunner, part, new_version, token
+    runner: CliRunner, py_version, part, new_version, token
 ):
 
     result = runner.invoke(
@@ -86,7 +91,7 @@ __version__ = "{new_version}"
     ],
 )
 @pytest.mark.usefixtures("fakefs_twopackage")
-def test_py_version_bump_two_package(runner: CliRunner, part, new_version):
+def test_py_version_bump_two_package(runner: CliRunner, py_version, part, new_version):
 
     result = runner.invoke(
         py_version, ["bump", part, "--project_root", "/"], catch_exceptions=False
