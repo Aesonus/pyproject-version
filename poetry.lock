@@ -590,6 +590,20 @@ pluggy = ">=1.4,<2.0"
 testing = ["argcomplete", "attrs (>=19.2)", "hypothesis (>=3.56)", "mock", "pygments (>=2.7.2)", "requests", "setuptools", "xmlschema"]
 
 [[package]]
+name = "pytest-antilru"
+version = "1.1.1"
+description = "Bust functools.lru_cache when running pytest to avoid test pollution"
+optional = false
+python-versions = "*"
+files = [
+    {file = "pytest-antilru-1.1.1.tar.gz", hash = "sha256:3faef21aa0108d682f204842468ce176e9c2ba9e76b852da6c33ab3f10a69aeb"},
+    {file = "pytest_antilru-1.1.1-py2.py3-none-any.whl", hash = "sha256:8f2ab06f130513ffc947392ccaf52bdc06428125f81edeac4e2907cdd8785074"},
+]
+
+[package.dependencies]
+pytest = "*"
+
+[[package]]
 name = "pytest-cov"
 version = "5.0.0"
 description = "Pytest plugin for measuring coverage."
@@ -748,4 +762,4 @@ test = ["covdefaults (>=2.3)", "coverage (>=7.2.7)", "coverage-enable-subprocess
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.11,<3.13"
-content-hash = "5559240361e83dc5b742be081ce734f58ee7f7beb06b058ee700f18cae00ec12"
+content-hash = "3951b5921cc5093b86d61fef4994ef32aa664506ef9b6402ed6c2f6ae28c4ee5"

@@ -1,11 +1,9 @@
 """Command line interface for the py_version package."""
 
 import pathlib
-from typing import Any, Literal
+from typing import Literal
 
 import click
-import semver
-import tomlkit
 
 from py_version import __version__, tools
 
@@ -44,22 +42,8 @@ def bump(
     """Bump the version of a Python project."""
     pyproject_toml = project_root / "pyproject.toml"
 
-    if not pyproject_toml.exists():
-        raise click.ClickException(f"Could not find pyproject.toml in {project_root}")
+    current_version = tools.parse_pyproject_file_version(pyproject_toml)
 
-    pyproject: Any = tomlkit.parse(pyproject_toml.read_text(encoding="utf-8"))
-
-    if "tool" not in pyproject or "poetry" not in pyproject["tool"]:
-        raise click.ClickException(
-            "Could not find poetry configuration in pyproject.toml"
-        )
-
-    try:
-        current_version = semver.version.Version.parse(
-            pyproject["tool"]["poetry"]["version"]
-        )
-    except ValueError as exc:
-        raise click.ClickException(f"Could not parse version: {exc}")
     if part == "build":
         new_version = getattr(current_version, f"bump_{part}")(version_token)
     else:
@@ -68,14 +52,11 @@ def bump(
         f"Bumping {part} version from {click.style(current_version, fg='cyan')}"
         f" to {click.style(new_version, fg='green')}"
     )
-
     if dry_run:
         click.secho("Dry run, not updating files.", fg="yellow")
         return
-    pyproject["tool"]["poetry"]["version"] = str(new_version)
-    pyproject_toml.write_text(pyproject.as_string(), encoding="utf-8")
 
-    for path in map(
-        pathlib.Path, pyproject["tool"].get("py-version", {"files": []})["files"]
-    ):
-        tools.change_init_file_version(path, new_version)
+    tools.change_pyproject_file_version(pyproject_toml, str(new_version))
+
+    for path in tools.get_pyproject_files(pyproject_toml):
+        tools.change_init_file_version(path, str(new_version))

@@ -31,7 +31,7 @@ def py_version():
 def test_py_version_bump_one_package(runner: CliRunner, py_version, part, new_version):
 
     result = runner.invoke(
-        py_version, ["bump", part, "--project_root", "/"], catch_exceptions=False
+        py_version, ["bump", part, "--project-root", "/"], catch_exceptions=False
     )
     print(result.output)
 
@@ -62,7 +62,7 @@ def test_py_version_bump_one_package_with_token(
 
     result = runner.invoke(
         py_version,
-        ["bump", part, "--project_root", "/", "--token", token],
+        ["bump", part, "--project-root", "/", "--token", token],
         catch_exceptions=False,
     )
     print(result.output)
@@ -94,7 +94,7 @@ __version__ = "{new_version}"
 def test_py_version_bump_two_package(runner: CliRunner, py_version, part, new_version):
 
     result = runner.invoke(
-        py_version, ["bump", part, "--project_root", "/"], catch_exceptions=False
+        py_version, ["bump", part, "--project-root", "/"], catch_exceptions=False
     )
     print(result.output)
 
