@@ -22,7 +22,7 @@ from py_version import tools
         "multiline",
     ],
 )
-def test_change_file_version_replaces_version_with_new_version(
+def test_change_init_file_version_replaces_version_with_new_version(
     fs, package_init_template: str, old_version, expected_version
 ):
     # Set up
@@ -33,7 +33,7 @@ def test_change_file_version_replaces_version_with_new_version(
 
     path = pathlib.Path("/package_a/__init__.py")
     new_version = "0.1.1"
-    tools.change_file_version(path, new_version)
+    tools.change_init_file_version(path, new_version)
 
     with open(path, encoding="utf-8") as f:
         assert f.read() == package_init_template.format(version=expected_version)

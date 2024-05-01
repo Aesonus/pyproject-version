@@ -6,7 +6,7 @@ import re
 import tokenize
 
 
-def change_file_version(path: pathlib.Path, new_version: str) -> None:
+def change_init_file_version(path: pathlib.Path, new_version: str) -> None:
     """Change the version in a file.
 
     Args:

@@ -78,4 +78,4 @@ def bump(
     for path in map(
         pathlib.Path, pyproject["tool"].get("py-version", {"files": []})["files"]
     ):
-        tools.change_file_version(path, new_version)
+        tools.change_init_file_version(path, new_version)
