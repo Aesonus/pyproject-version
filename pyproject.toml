@@ -28,6 +28,7 @@ autoflake = "^2.3.1"
 pre-commit = "^3.7.0"
 pyfakefs = "^5.4.1"
 pytest-antilru = "^1.1.1"
+pytest-mock = "^3.14.0"
 
 [tool.poetry.group.dev.dependencies.docformatter]
 extras = ["tomli"]
