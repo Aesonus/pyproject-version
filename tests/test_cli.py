@@ -1,8 +1,8 @@
-from typing import Any
+from pathlib import Path
 
 import pytest
-import tomlkit
 from click.testing import CliRunner
+from semver import Version
 
 
 @pytest.fixture
@@ -11,10 +11,17 @@ def runner():
 
 
 @pytest.fixture
-def py_version():
-    from py_version.cli import py_version
+def pyproject_version():
+    from pyproject_version.cli import pyproject_version
 
-    yield py_version
+    yield pyproject_version
+
+
+@pytest.fixture
+def patch_tools(mocker):
+    mock = mocker.patch("pyproject_version.cli.tools")
+    mock.parse_pyproject_file_version.return_value = Version(0, 1, 0)
+    return mock
 
 
 @pytest.mark.parametrize(
@@ -27,25 +34,34 @@ def py_version():
         ("build", "0.1.0+build.1"),
     ],
 )
+@pytest.mark.parametrize("dry_run", [True, False], ids=["dry_run", "update_files"])
 @pytest.mark.usefixtures("fakefs_onepackage")
-def test_py_version_bump_one_package(runner: CliRunner, py_version, part, new_version):
+def test_pyproject_version_bump(
+    runner: CliRunner, patch_tools, pyproject_version, part, new_version, dry_run: bool
+):
+    patch_tools.get_version_files_from_pyproject.return_value = [
+        Path("/package_a/__init__.py").absolute()
+    ]
 
     result = runner.invoke(
-        py_version, ["bump", part, "--project_root", "/"], catch_exceptions=False
+        pyproject_version,
+        ["bump", part, "--project-root", "/", *(["--dry-run"] if dry_run else [])],
+        catch_exceptions=False,
     )
-    print(result.output)
 
-    expected_init_contents = f'''"""Test package_a init file."""
+    assert result.output == (
+        f"Bumping {part} version from 0.1.0"
+        f" to {new_version}\n" + ("Dry run, not updating files.\n" if dry_run else "")
+    )
 
-__version__ = "{new_version}"
-'''
-    with open("/pyproject.toml", encoding="utf-8") as f:
-        pyproject: dict[str, Any] = tomlkit.parse(f.read())
+    if not dry_run:
+        patch_tools.change_pyproject_file_version.assert_called_once_with(
+            Path("/pyproject.toml").absolute(), new_version
+        )
 
-        assert pyproject["tool"]["poetry"]["version"] == new_version
-
-    with open("/package_a/__init__.py", encoding="utf-8") as f:
-        assert f.read() == expected_init_contents
+        patch_tools.change_init_file_version.assert_called_once_with(
+            Path("/package_a/__init__.py").absolute(), new_version
+        )
 
 
 @pytest.mark.parametrize(
@@ -55,64 +71,40 @@ __version__ = "{new_version}"
         ("build", "0.1.0+bui.1", "bui"),
     ],
 )
+@pytest.mark.parametrize("dry_run", [True, False], ids=["dry_run", "update_files"])
 @pytest.mark.usefixtures("fakefs_onepackage")
-def test_py_version_bump_one_package_with_token(
-    runner: CliRunner, py_version, part, new_version, token
+def test_pyproject_version_bump_with_token(
+    runner: CliRunner, patch_tools, pyproject_version, part, new_version, token, dry_run
 ):
+    patch_tools.get_version_files_from_pyproject.return_value = [
+        Path("/package_a/__init__.py").absolute()
+    ]
 
     result = runner.invoke(
-        py_version,
-        ["bump", part, "--project_root", "/", "--token", token],
+        pyproject_version,
+        [
+            "bump",
+            part,
+            "--project-root",
+            "/",
+            "--token",
+            token,
+            *(["--dry-run"] if dry_run else []),
+        ],
         catch_exceptions=False,
     )
     print(result.output)
 
-    expected_init_content = f'''"""Test package_a init file."""
-
-__version__ = "{new_version}"
-'''
-    with open("/pyproject.toml", encoding="utf-8") as f:
-        pyproject: dict[str, Any] = tomlkit.parse(f.read())
-
-        assert pyproject["tool"]["poetry"]["version"] == new_version
-
-    with open("/package_a/__init__.py", encoding="utf-8") as f:
-        assert f.read() == expected_init_content
-
-
-@pytest.mark.parametrize(
-    "part, new_version",
-    [
-        ("major", "1.0.0"),
-        ("minor", "0.2.0"),
-        ("patch", "0.1.1"),
-        ("prerelease", "0.1.1-rc.1"),
-        ("build", "0.1.0+build.1"),
-    ],
-)
-@pytest.mark.usefixtures("fakefs_twopackage")
-def test_py_version_bump_two_package(runner: CliRunner, py_version, part, new_version):
-
-    result = runner.invoke(
-        py_version, ["bump", part, "--project_root", "/"], catch_exceptions=False
+    assert result.output == (
+        f"Bumping {part} version from 0.1.0"
+        f" to {new_version}\n" + ("Dry run, not updating files.\n" if dry_run else "")
     )
-    print(result.output)
 
-    expected_package_a_init_contents = f'''"""Test package_a init file."""
+    if not dry_run:
+        patch_tools.change_pyproject_file_version.assert_called_once_with(
+            Path("/pyproject.toml").absolute(), new_version
+        )
 
-__version__ = "{new_version}"
-'''
-    expected_package_b_init_contents = '''"""Test package_b init file."""
-
-__version__ = "0.1.0"
-'''
-    with open("/pyproject.toml", encoding="utf-8") as f:
-        pyproject: dict[str, Any] = tomlkit.parse(f.read())
-
-        assert pyproject["tool"]["poetry"]["version"] == new_version
-
-    with open("/package_a/__init__.py", encoding="utf-8") as f:
-        assert f.read() == expected_package_a_init_contents
-
-    with open("/package_b/__init__.py", encoding="utf-8") as f:
-        assert f.read() == expected_package_b_init_contents
+        patch_tools.change_init_file_version.assert_called_once_with(
+            Path("/package_a/__init__.py").absolute(), new_version
+        )

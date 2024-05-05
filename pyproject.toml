@@ -1,15 +1,16 @@
 [tool.poetry]
-name = "py-version"
-version = "0.1.0-dev0"
+name = "pyproject-version"
+version = "0.1.0-dev1"
 description = "Utilities for maintaining the version in python projects."
 authors = ["Cory Laughlin <laughlin.cory@gmail.com>"]
 readme = "README.md"
+license = "MIT"
 
-[tool.py-version]
-files = ["py_version/__init__.py"]
+[tool.pyproject-version]
+files = ["pyproject_version/__init__.py"]
 
 [tool.poetry.scripts]
-py-version = "py_version.cli:py_version"
+pyproject-version = "pyproject_version.cli:pyproject_version"
 
 [tool.poetry.dependencies]
 python = ">=3.11,<3.13"
@@ -27,21 +28,23 @@ mypy = "^1.9.0"
 autoflake = "^2.3.1"
 pre-commit = "^3.7.0"
 pyfakefs = "^5.4.1"
+pytest-antilru = "^1.1.1"
+pytest-mock = "^3.14.0"
 
 [tool.poetry.group.dev.dependencies.docformatter]
 extras = ["tomli"]
 version = "^1.7.5"
 
 [[tool.poetry.packages]]
-include = "py_version"
+include = "pyproject_version"
 from = "."
 
 [tool.mypy]
-files = ["py_version"]
+files = ["pyproject_version"]
 ignore_missing_imports = true
 
 [tool.pytest.ini_options]
-addopts = "--cov=py_version --cov-branch --cov-report xml --cov-report html -vvv"
+addopts = "--cov=pyproject_version --cov-branch --cov-report xml --cov-report html -vvv"
 
 [tool.autoflake]
 remove_all_unused_imports = true
