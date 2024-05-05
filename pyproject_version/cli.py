@@ -1,22 +1,22 @@
-"""Command line interface for the py_version package."""
+"""Command line interface for the pyproject_version package."""
 
 import pathlib
 from typing import Literal
 
 import click
 
-from py_version import __version__, tools
+from pyproject_version import __version__, tools
 
 PART_CHOICES = ["major", "minor", "patch", "prerelease", "build"]
 
 
 @click.group()
 @click.version_option(version=__version__)
-def py_version():
+def pyproject_version():
     """A simple CLI for working with Python project versions."""
 
 
-@py_version.command()
+@pyproject_version.command()
 @click.argument("part", type=click.Choice(PART_CHOICES))
 @click.option(
     "--project-root",

@@ -3,7 +3,7 @@ import pathlib
 import pytest
 import semver
 
-from py_version import tools
+from pyproject_version import tools
 
 
 @pytest.fixture
@@ -158,7 +158,7 @@ class TestGetVersionFilesFromPyproject:
             "[tool.poetry]",
             "[tool]",
             "[project]",
-            "[tool.py-version]",
+            "[tool.pyproject-version]",
         ],
     )
     def test_returns_empty_list_if_no_files(self, fs, contents):

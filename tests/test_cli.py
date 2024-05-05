@@ -11,15 +11,15 @@ def runner():
 
 
 @pytest.fixture
-def py_version():
-    from py_version.cli import py_version
+def pyproject_version():
+    from pyproject_version.cli import pyproject_version
 
-    yield py_version
+    yield pyproject_version
 
 
 @pytest.fixture
 def patch_tools(mocker):
-    mock = mocker.patch("py_version.cli.tools")
+    mock = mocker.patch("pyproject_version.cli.tools")
     mock.parse_pyproject_file_version.return_value = Version(0, 1, 0)
     return mock
 
@@ -36,15 +36,15 @@ def patch_tools(mocker):
 )
 @pytest.mark.parametrize("dry_run", [True, False], ids=["dry_run", "update_files"])
 @pytest.mark.usefixtures("fakefs_onepackage")
-def test_py_version_bump(
-    runner: CliRunner, patch_tools, py_version, part, new_version, dry_run: bool
+def test_pyproject_version_bump(
+    runner: CliRunner, patch_tools, pyproject_version, part, new_version, dry_run: bool
 ):
     patch_tools.get_version_files_from_pyproject.return_value = [
         Path("/package_a/__init__.py").absolute()
     ]
 
     result = runner.invoke(
-        py_version,
+        pyproject_version,
         ["bump", part, "--project-root", "/", *(["--dry-run"] if dry_run else [])],
         catch_exceptions=False,
     )
@@ -73,15 +73,15 @@ def test_py_version_bump(
 )
 @pytest.mark.parametrize("dry_run", [True, False], ids=["dry_run", "update_files"])
 @pytest.mark.usefixtures("fakefs_onepackage")
-def test_py_version_bump_with_token(
-    runner: CliRunner, patch_tools, py_version, part, new_version, token, dry_run
+def test_pyproject_version_bump_with_token(
+    runner: CliRunner, patch_tools, pyproject_version, part, new_version, token, dry_run
 ):
     patch_tools.get_version_files_from_pyproject.return_value = [
         Path("/package_a/__init__.py").absolute()
     ]
 
     result = runner.invoke(
-        py_version,
+        pyproject_version,
         [
             "bump",
             part,

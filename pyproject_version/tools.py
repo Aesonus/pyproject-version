@@ -121,7 +121,7 @@ def get_version_files_from_pyproject(path: pathlib.Path) -> list[pathlib.Path]:
                 methodcaller("absolute"),
                 map(
                     pathlib.Path,
-                    pyproject["tool"]["py-version"]["files"],  # type: ignore
+                    pyproject["tool"]["pyproject-version"]["files"],  # type: ignore
                 ),
             )
         )

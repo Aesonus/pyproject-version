@@ -9,5 +9,5 @@ readme = "README.md"
 include = "package_a"
 from = "."
 
-[tool.py-version]
+[tool.pyproject-version]
 files = ["package_a/__init__.py"]
