@@ -31,7 +31,14 @@ def pyproject_version():
     default=".",
     help="The root of the Python project.",
 )
-@click.option("--token", "-t", "version_token", type=str, default=None)
+@click.option(
+    "--token",
+    "-t",
+    "version_token",
+    type=str,
+    default=None,
+    help="The token to use for pre-release and build versions.",
+)
 @click.option("--dry-run", is_flag=True, help="Print the new version without updating.")
 def bump(
     part: Literal["major", "minor", "patch", "prerelease", "build"],

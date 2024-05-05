@@ -4,6 +4,7 @@ version = "0.1.0-dev0"
 description = "Utilities for maintaining the version in python projects."
 authors = ["Cory Laughlin <laughlin.cory@gmail.com>"]
 readme = "README.md"
+license = "MIT"
 
 [tool.pyproject-version]
 files = ["pyproject_version/__init__.py"]
