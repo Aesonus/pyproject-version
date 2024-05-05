@@ -58,5 +58,5 @@ def bump(
 
     tools.change_pyproject_file_version(pyproject_toml, str(new_version))
 
-    for path in tools.get_pyproject_files(pyproject_toml):
+    for path in tools.get_version_files_from_pyproject(pyproject_toml):
         tools.change_init_file_version(path, str(new_version))

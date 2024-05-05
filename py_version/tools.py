@@ -5,6 +5,7 @@ import io
 import pathlib
 import re
 import tokenize
+from operator import methodcaller
 
 import semver
 import tomlkit
@@ -103,7 +104,7 @@ def parse_pyproject_file_version(path: pathlib.Path) -> semver.VersionInfo:
     return semver.VersionInfo.parse(pyproject["tool"]["poetry"]["version"])  # type: ignore
 
 
-def get_pyproject_files(path: pathlib.Path) -> list[pathlib.Path]:
+def get_version_files_from_pyproject(path: pathlib.Path) -> list[pathlib.Path]:
     """Get the files that are to have their ``__version__`` updated.
 
     Args:
@@ -114,9 +115,15 @@ def get_pyproject_files(path: pathlib.Path) -> list[pathlib.Path]:
 
     """
     pyproject = parse_pyproject(path)
-    return list(
-        map(
-            pathlib.Path,
-            pyproject["tool"].get("py-version", {"files": []})["files"],  # type: ignore
+    try:
+        return list(
+            map(
+                methodcaller("absolute"),
+                map(
+                    pathlib.Path,
+                    pyproject["tool"]["py-version"]["files"],  # type: ignore
+                ),
+            )
         )
-    )
+    except KeyError:
+        return []

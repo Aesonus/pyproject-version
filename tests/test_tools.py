@@ -141,3 +141,31 @@ class TestParsePyprojectFileVersion:
         path = pathlib.Path("/pyproject.toml")
         with pytest.raises(KeyError):
             tools.parse_pyproject_file_version(path)
+
+
+class TestGetVersionFilesFromPyproject:
+    @pytest.mark.usefixtures("fakefs_onepackage")
+    def test_returns_list_of_files(self):
+        path = pathlib.Path("/pyproject.toml")
+
+        files = tools.get_version_files_from_pyproject(path)
+
+        assert files == [pathlib.Path("package_a/__init__.py").absolute()]
+
+    @pytest.mark.parametrize(
+        "contents",
+        [
+            "[tool.poetry]",
+            "[tool]",
+            "[project]",
+            "[tool.py-version]",
+        ],
+    )
+    def test_returns_empty_list_if_no_files(self, fs, contents):
+        fs.create_file("/pyproject.toml", contents=contents)
+
+        path = pathlib.Path("/pyproject.toml")
+
+        files = tools.get_version_files_from_pyproject(path)
+
+        assert files == []
