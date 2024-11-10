@@ -87,7 +87,12 @@ def bump(
 )
 @click.option("--dry-run", is_flag=True, help="Print the new version without updating.")
 def set_version(new_version: str, project_root: pathlib.Path, dry_run: bool = False):
-    """Set the version of a Python project to the specified version."""
+    """Set the version of a Python project to the specified version.
+
+    `NEW_VERSION` is the new version to set. It will be validated by the
+    [`semver`](https://pypi.org/project/semver/) library.
+
+    """
     pyproject_toml = project_root / "pyproject.toml"
 
     # Check to ensure the new version is valid
