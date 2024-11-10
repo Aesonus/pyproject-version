@@ -40,6 +40,23 @@ pyproject-version bump [OPTIONS] {major|minor|patch|prerelease|build}
     Print the new version without updating.
 
 
+### Version Set
+
+```bash
+pyproject-version set-version [OPTIONS] NEW_VERSION
+```
+
+`NEW_VERSION` is the new version to set. It will be validated by the [`semver`](https://pypi.org/project/semver/) library.
+
+**Options:**
+
++ `-r`, `--project-root` `DIRECTORY`
+
+    The root of the Python project.
++ `--dry-run`
+
+    Print the new version without updating.
+
 
 ## License
 
