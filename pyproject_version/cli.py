@@ -4,6 +4,7 @@ import pathlib
 from typing import Literal
 
 import click
+import semver
 
 from pyproject_version import __version__, tools
 
@@ -67,3 +68,40 @@ def bump(
 
     for path in tools.get_version_files_from_pyproject(pyproject_toml):
         tools.change_init_file_version(path, str(new_version))
+
+
+@pyproject_version.command()
+@click.argument("new_version", type=str)
+@click.option(
+    "--project-root",
+    "-r",
+    type=click.Path(
+        exists=True,
+        file_okay=False,
+        allow_dash=False,
+        path_type=pathlib.Path,
+        resolve_path=True,
+    ),
+    default=".",
+    help="The root of the Python project.",
+)
+@click.option("--dry-run", is_flag=True, help="Print the new version without updating.")
+def set_version(new_version: str, project_root: pathlib.Path, dry_run: bool = False):
+    """Set the version of a Python project to the specified version."""
+    pyproject_toml = project_root / "pyproject.toml"
+
+    # Check to ensure the new version is valid
+    try:
+        semver.Version.parse(new_version)
+    except ValueError as exc:
+        click.secho(f"Invalid version: {new_version}", fg="red")
+        raise click.Abort() from exc
+    click.echo(f"Setting version to {click.style(new_version, fg='green')}")
+    if dry_run:
+        click.secho("Dry run, not updating files.", fg="yellow")
+        return
+
+    tools.change_pyproject_file_version(pyproject_toml, new_version)
+
+    for path in tools.get_version_files_from_pyproject(pyproject_toml):
+        tools.change_init_file_version(path, new_version)
