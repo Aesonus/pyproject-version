@@ -1,0 +1,16 @@
+[project]
+name = "one-package-root"
+version = "0.1.0"
+description = "Utilities for maintaining the version in python projects."
+readme = "README.md"
+
+[[project.authors]]
+name = "Cory Laughlin"
+email = "laughlin.cory@gmail.com"
+
+[[tool.poetry.packages]]
+include = "package_a"
+from = "."
+
+[tool.pyproject-version]
+files = ["package_a/__init__.py"]
