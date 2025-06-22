@@ -86,7 +86,14 @@ def change_pyproject_file_version(path: pathlib.Path, new_version: str) -> None:
 
     """
     pyproject = parse_pyproject(path)
-    pyproject["tool"]["poetry"]["version"] = new_version  # type: ignore
+    try:
+        pyproject["tool"]["poetry"]["version"] = new_version  # type: ignore
+    except KeyError:
+        pass
+    try:
+        pyproject["project"]["version"] = new_version  # type: ignore
+    except KeyError:
+        pass
     path.write_text(pyproject.as_string(), encoding="utf-8")
 
 
@@ -101,7 +108,14 @@ def parse_pyproject_file_version(path: pathlib.Path) -> semver.VersionInfo:
 
     """
     pyproject = parse_pyproject(path)
-    return semver.VersionInfo.parse(pyproject["tool"]["poetry"]["version"])  # type: ignore
+    try:
+        return semver.VersionInfo.parse(pyproject["project"]["version"])  # type: ignore
+    except KeyError:
+        pass
+    try:
+        return semver.VersionInfo.parse(pyproject["tool"]["poetry"]["version"])  # type: ignore
+    except KeyError as e:
+        raise KeyError("The version is not set in the pyproject.toml file.") from e
 
 
 def get_version_files_from_pyproject(path: pathlib.Path) -> list[pathlib.Path]:
