@@ -13,7 +13,7 @@ files = ["pyproject_version/__init__.py"]
 pyproject-version = "pyproject_version.cli:pyproject_version"
 
 [tool.poetry.dependencies]
-python = ">=3.11,<3.13"
+python = ">=3.11,<4.0"
 semver = "^3.0.2"
 click = "^8.1.7"
 tomlkit = "^0.12.4"
