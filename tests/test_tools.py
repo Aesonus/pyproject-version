@@ -7,10 +7,14 @@ from pyproject_version import tools
 
 
 @pytest.fixture
-def minimal_pyproject_template():
-    return """[tool.poetry]
+def minimal_pyproject_template(request):
+    section_header = request.param if hasattr(request, "param") else "tool.poetry"
+    return f"""[{section_header}]
     name = "package_a"
-    version = "{version}"
+    version = "{{version}}"
+    [[tool.poetry.packages]]
+    include = "package_a"
+    from = "."
     """
 
 
@@ -58,6 +62,11 @@ class TestChangePyprojectFileVersion:
             ("0.1.0+build.1", "0.1.1"),
         ],
         ids=["normal_version", "dev_version", "build_version"],
+    )
+    @pytest.mark.parametrize(
+        "minimal_pyproject_template",
+        ["tool.poetry", "project"],
+        indirect=True,
     )
     def test_change_pyproject_file_version_replaces_version_with_new_version(
         self, fs, old_version, expected_version, minimal_pyproject_template
