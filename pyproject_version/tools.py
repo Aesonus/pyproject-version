@@ -86,14 +86,12 @@ def change_pyproject_file_version(path: pathlib.Path, new_version: str) -> None:
 
     """
     pyproject = parse_pyproject(path)
-    try:
+    if "version" in pyproject.get("tool", {}).get("poetry", {}):
         pyproject["tool"]["poetry"]["version"] = new_version  # type: ignore
-    except KeyError:
-        pass
-    try:
+    elif "version" in pyproject.get("project", {}):
         pyproject["project"]["version"] = new_version  # type: ignore
-    except KeyError:
-        pass
+    else:
+        raise KeyError("The version is not set in the pyproject.toml file.")
     path.write_text(pyproject.as_string(), encoding="utf-8")
 
 
